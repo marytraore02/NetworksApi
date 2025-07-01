@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statut de l'Authentification</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; line-height: 1.6; }
+        .container { max-width: 800px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 8px; }
+        .success { color: #28a745; }
+        .error { color: #dc3545; }
+        code { background-color: #eee; padding: 2px 5px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Résultat de l'Authentification Instagram</h1>
+        {% if error %}
+            <h2 class="error">Échec de l'authentification</h2>
+            <p>{{ error }}</p>
+        {% elif access_token %}
+            <h2 class="success">Authentification réussie !</h2>
+            <p>Votre ID utilisateur est : <strong>{{ user_id }}</strong></p>
+            <p>Votre jeton d'accès (Access Token) est :</p>
+            <code style="word-wrap: break-word;">{{ access_token }}</code>
+            <p><strong>Note :</strong> Ce jeton est à durée de vie courte (1 heure). Vous devriez maintenant l'échanger contre un jeton à durée de vie longue pour une utilisation prolongée.</p>
+        {% else %}
+            <p>Aucune information reçue.</p>
+        {% endif %}
+    </div>
+</body>
+</html>

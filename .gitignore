@@ -1,0 +1,16 @@
+.env
+/env/
+/venv/
+
+
+__pycache__
+meet/__pycache__
+meet/token.json
+meet/credentials.json
+
+tiktok/__pycache__
+tiktok/test.py
+
+facebook/__pycache__
+insta/__pycache__
+zoom/__pycache__

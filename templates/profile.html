@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Profil Utilisateur</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 30px; }
+        .profile-card { border: 1px solid #ccc; border-radius: 10px; padding: 20px; width: 300px; margin: auto; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .profile-card img { border-radius: 50%; width: 100px; height: 100px; }
+        .profile-card p { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>Votre Profil Facebook</h1>
+    
+    {% if user_profile %}
+        <div class="profile-card">
+            <img src="{{ user_profile.picture.data.url }}" alt="Photo de profil de {{ user_profile.name }}">
+            <h2>{{ user_profile.name }}</h2>
+            <p><strong>ID Facebook :</strong> {{ user_profile.id }}</p>
+            <p><strong>Email :</strong> {{ user_profile.email }}</p>
+        </div>
+        <p style="margin-top: 20px;">
+            <a href="{{ url_for('index') }}">Retour à l'accueil</a> | 
+            <a href="{{ url_for('logout') }}">Se déconnecter</a>
+        </p>
+    {% else %}
+        <p>Impossible de charger le profil. Veuillez vous <a href="{{ url_for('facebook_login') }}">reconnecter</a>.</p>
+    {% endif %}
+</body>
+</html>

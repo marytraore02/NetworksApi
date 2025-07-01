@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Exemple Flask Facebook</title>
+    <style>
+        body { font-family: sans-serif; text-align: center; margin-top: 50px; }
+        .button { padding: 10px 20px; background-color: #1877F2; color: white; text-decoration: none; border-radius: 5px; }
+        .profile { margin-top: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Bienvenue sur l'exemple Flask + API Facebook</h1>
+    
+    {% if user_profile %}
+        <div class="profile">
+            <p>Vous êtes connecté en tant que <strong>{{ user_profile.name }}</strong>.</p>
+            <a href="{{ url_for('profile') }}">Voir mon profil</a> | 
+            <a href="{{ url_for('logout') }}">Se déconnecter</a>
+        </div>
+    {% else %}
+        <p>Pour tester, veuillez vous connecter avec votre compte Facebook.</p>
+        <a href="{{ url_for('facebook_login') }}" class="button">Se connecter avec Facebook</a>
+    {% endif %}
+</body>
+</html>

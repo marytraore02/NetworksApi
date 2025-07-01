@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test & Publication API Facebook</title>
+    <!-- Chargement du CDN Tailwind CSS pour un style rapide et réactif -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Styles personnalisés pour la police */
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* Masque/Affiche les champs multimédia selon le type de publication sélectionné */
+        .hidden-field {
+            display: none;
+        }
+    </style>
+</head>
+
+<body class="bg-gray-100 flex items-center justify-center min-h-screen p-4">
+    <div class="bg-white p-8 rounded-lg shadow-xl w-full max-w-2xl">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-6">Test & Publication API Facebook</h1>
+
+        <!-- Section de Test des Identifiants -->
+        <div class="mb-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">1. Tester vos identifiants Facebook</h2>
+            <form action="/test_facebook_api" method="post" class="space-y-4">
+                <div>
+                    <label for="app_id" class="block text-sm font-medium text-gray-700">ID d'Application (App ID)</label>
+                    <input type="text" id="app_id" name="app_id" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="app_secret" class="block text-sm font-medium text-gray-700">Clé Secrète d'Application (App Secret)</label>
+                    <input type="password" id="app_secret" name="app_secret" required class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div class="border-t border-gray-200 pt-4 mt-4">
+                    <p class="text-sm font-semibold text-gray-600 mb-2">Informations de Page (Facultatif, pour tester le
+                        jeton de page)</p>
+                    <div>
+                        <label for="page_id" class="block text-sm font-medium text-gray-700">ID de Page (Page ID)</label>
+                        <input type="text" id="page_id" name="page_id" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                    <div class="mt-4">
+                        <label for="page_access_token" class="block text-sm font-medium text-gray-700">Jeton d'Accès de Page (Page Access Token)</label>
+                        <input type="password" id="page_access_token" name="page_access_token" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                    Lancer le Test des Identifiants
+                </button>
+            </form>
+
+            <!-- Résultats du test des identifiants d'application -->
+
+
+            <!-- Résultats du test du jeton d'accès de page -->
+
+        </div>
+
+        <!-- Section de Publication sur Facebook -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 border-b pb-2">2. Publier sur votre Page Facebook</h2>
+            <form action="/publish_post" method="post" class="space-y-4">
+                <div>
+                    <label for="publish_page_id" class="block text-sm font-medium text-gray-700">ID de Page</label>
+                    <input type="text" id="publish_page_id" name="publish_page_id" required value="" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="publish_page_access_token" class="block text-sm font-medium text-gray-700">Jeton d'Accès de Page</label>
+                    <input type="password" id="publish_page_access_token" name="publish_page_access_token" required value="" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-gray-700">Type de Publication</label>
+                    <div class="mt-2 flex space-x-4">
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="post_type" value="text" checked class="form-radio" onchange="toggleMediaField()">
+                            <span class="ml-2 text-gray-700">Texte</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="post_type" value="image" class="form-radio" onchange="toggleMediaField()">
+                            <span class="ml-2 text-gray-700">Image</span>
+                        </label>
+                        <label class="inline-flex items-center">
+                            <input type="radio" name="post_type" value="video" class="form-radio" onchange="toggleMediaField()">
+                            <span class="ml-2 text-gray-700">Vidéo</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div>
+                    <label for="message_content" class="block text-sm font-medium text-gray-700">Message / Légende / Description</label>
+                    <textarea id="message_content" name="message_content" rows="3" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Contenu de votre publication..."></textarea>
+                </div>
+
+                <div id="media_url_field" class="hidden-field">
+                    <label for="media_url" class="block text-sm font-medium text-gray-700">URL du média (Image ou Vidéo)</label>
+                    <input type="url" id="media_url" name="media_url" class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Ex: https://example.com/ma_photo.jpg">
+                </div>
+
+                <button type="submit" class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                    Publier sur Facebook
+                </button>
+            </form>
+
+            <!-- Résultats de la publication -->
+
+            <div class="mt-6 p-4 rounded-md bg-yellow-50 border-yellow-200 border">
+                <h3 class="font-semibold text-lg mb-2">Résultat de la publication:</h3>
+                <p class="text-sm">Statut: <span class="font-medium text-yellow-800">ERROR</span></p>
+                <p class="text-sm text-gray-700">Erreur lors de l&#39;envoi de la publication : 403 Client Error:
+                    Forbidden for url: https://graph.facebook.com/v19.0/701221379738283/feed</p>
+
+
+                <p class="text-xs text-gray-600 mt-1">Détails:
+                <pre
+                    class="whitespace-pre-wrap break-all">"403 Client Error: Forbidden for url: https://graph.facebook.com/v19.0/701221379738283/feed"</pre>
+                </p>
+
+            </div>
+
+        </div>
+    </div>
+
+    <script>
+        function toggleMediaField() {
+            const postType = document.querySelector('input[name="post_type"]:checked').value;
+            const mediaUrlField = document.getElementById('media_url_field');
+            if (postType === 'image' || postType === 'video') {
+                mediaUrlField.classList.remove('hidden-field');
+            } else {
+                mediaUrlField.classList.add('hidden-field');
+            }
+        }
+
+        // Appeler au chargement pour s'assurer que l'état initial est correct
+        document.addEventListener('DOMContentLoaded', toggleMediaField);
+    </script>
+</body>
+
+</html>
