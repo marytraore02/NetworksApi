@@ -5,80 +5,188 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mon Profil TikTok</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .video-card { transition: transform 0.2s ease-in-out; }
+        .video-card:hover { transform: translateY(-5px); }
+        .loader { border-top-color: #3498db; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen font-sans">
+<body class="bg-gray-100 font-sans">
 
-    <div id="loading" class="text-center">
-        <p class="text-lg text-gray-600">Chargement de votre profil...</p>
+    <div id="loading" class="flex items-center justify-center h-screen">
+        <div class="loader ease-linear rounded-full border-8 border-t-8 border-gray-200 h-32 w-32"></div>
     </div>
 
-    <div id="profile-container" class="hidden bg-white p-8 rounded-2xl shadow-lg text-center max-w-sm w-full">
-        <img id="avatar" src="https://placehold.co/128x128/e2e8f0/e2e8f0" alt="Avatar de l'utilisateur" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md">
-        <h1 id="display-name" class="text-3xl font-bold text-gray-800"></h1>
-        <p id="username" class="text-gray-500 mb-6"></p>
+    <div id="main-content" class="container mx-auto p-4 md:p-8 hidden">
+        <div id="profile-container" class="bg-white p-8 rounded-2xl shadow-lg text-center max-w-sm w-full mx-auto mb-10">
+            <img id="avatar" src="https://placehold.co/128x128/e2e8f0/e2e8f0" alt="Avatar" class="w-32 h-32 rounded-full mx-auto mb-4 border-4 border-white shadow-md">
+            <h1 id="display-name" class="text-3xl font-bold text-gray-800"></h1>
+            <p id="username" class="text-gray-500 mb-6"></p>
+            <a href="/logout" class="w-full bg-red-500 text-white font-bold py-3 px-6 rounded-lg inline-block hover:bg-red-600 transition-colors">Se déconnecter</a>
+        </div>
         
-        <div class="bg-gray-50 p-4 rounded-lg mb-6 text-left">
-            <h2 class="font-bold text-sm text-gray-600 mb-2">Tests API (Exemples)</h2>
-            <p class="text-xs text-gray-500">Ces boutons sont des exemples pour montrer comment interagir avec votre API une fois authentifié.</p>
-            <button class="mt-2 w-full bg-blue-500 text-white text-sm font-bold py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors">Lister mes vidéos</button>
+        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-2xl w-full mx-auto mb-10">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Publier une Vidéo</h2>
+            <form id="upload-form">
+                <div class="mb-4">
+                    <label for="video-file" class="block text-sm font-medium text-gray-700 mb-2">Sélectionner un fichier vidéo (MP4, WebM)</label>
+                    <input type="file" id="video-file" name="video" accept="video/mp4,video/webm" required
+                           class="block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100"/>
+                </div>
+                <button type="submit" id="publish-button" class="w-full bg-blue-600 text-white font-bold py-3 px-6 rounded-lg hover:bg-blue-700 transition-colors disabled:bg-gray-400">
+                    Publier sur TikTok
+                </button>
+            </form>
+            <div id="upload-status" class="mt-4 text-center"></div>
         </div>
 
-        <a href="/logout" id="logout-button" class="w-full bg-red-500 text-white font-bold py-3 px-6 rounded-lg inline-block hover:bg-red-600 transition-colors duration-300">
-            Se déconnecter
-        </a>
+        <div class="bg-white p-8 rounded-2xl shadow-lg max-w-4xl w-full mx-auto">
+             <h2 class="text-2xl font-bold text-gray-800 mb-6">Mes Dernières Vidéos</h2>
+             <div id="video-list-loader" class="text-center hidden"><p>Chargement des vidéos...</p></div>
+             <div id="video-list" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                 </div>
+        </div>
+
     </div>
 
-    <div id="error-container" class="hidden bg-white p-8 rounded-2xl shadow-lg text-center max-w-sm w-full">
+    <div id="error-container" class="hidden bg-white p-8 rounded-2xl shadow-lg text-center max-w-sm w-full mx-auto">
         <h1 class="text-2xl font-bold text-red-600 mb-4">Erreur</h1>
         <p id="error-message" class="text-gray-700 mb-6"></p>
         <a href="/" class="text-blue-500 hover:underline">Retour à la page d'accueil</a>
     </div>
 
     <script>
-        // Attend que la page soit chargée pour exécuter le script
         window.addEventListener('DOMContentLoaded', async () => {
             const loadingDiv = document.getElementById('loading');
-            const profileDiv = document.getElementById('profile-container');
+            const mainContentDiv = document.getElementById('main-content');
             const errorDiv = document.getElementById('error-container');
 
             try {
-                // Appelle le point de terminaison /api/user du backend pour obtenir les données
-                const response = await fetch('/api/user');
-
-                if (response.status === 401) {
-                    // Si non authentifié, redirige vers la page de connexion
+                // --- 1. Récupérer les informations de l'utilisateur ---
+                const userResponse = await fetch('/api/user');
+                if (userResponse.status === 401) {
                     window.location.href = '/';
                     return;
                 }
+                if (!userResponse.ok) throw new Error('Impossible de charger les informations du profil.');
+                
+                const userData = await userResponse.json();
+                const user = userData.user;
 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.detail?.error || 'Une erreur est survenue.');
-                }
-
-                const data = await response.json();
-                const user = data.user;
-
-                // Mettre à jour l'interface avec les informations de l'utilisateur
+                // Mettre à jour l'interface du profil
                 document.getElementById('avatar').src = user.avatar_url;
-                document.getElementById('avatar').onerror = () => {
-                    document.getElementById('avatar').src = 'https://placehold.co/128x128/e2e8f0/cccccc?text=Avatar';
-                };
                 document.getElementById('display-name').textContent = user.display_name;
                 document.getElementById('username').textContent = `@${user.username}`;
                 
-                // Afficher le conteneur du profil et cacher le chargement
+                // Afficher le contenu principal
                 loadingDiv.classList.add('hidden');
-                profileDiv.classList.remove('hidden');
+                mainContentDiv.classList.remove('hidden');
+                
+                // --- 2. Charger les vidéos de l'utilisateur ---
+                loadUserVideos();
 
             } catch (error) {
-                // Gérer les erreurs
-                console.error("Erreur lors de la récupération du profil:", error);
-                document.getElementById('error-message').textContent = error.message;
-                loadingDiv.classList.add('hidden');
-                errorDiv.classList.remove('hidden');
+                handleError(error.message);
             }
         });
+
+        // --- Fonction pour charger et afficher les vidéos ---
+        async function loadUserVideos() {
+            const videoListDiv = document.getElementById('video-list');
+            const videoLoader = document.getElementById('video-list-loader');
+            videoLoader.classList.remove('hidden');
+            videoListDiv.innerHTML = '';
+
+            try {
+                const response = await fetch('/api/videos');
+                if (!response.ok) throw new Error('Impossible de charger les vidéos.');
+
+                const data = await response.json();
+                
+                if (data.videos && data.videos.length > 0) {
+                    data.videos.forEach(video => {
+                        const videoCard = `
+                            <div class="video-card bg-gray-50 rounded-lg shadow overflow-hidden">
+                                <a href="${video.share_url}" target="_blank" rel="noopener noreferrer">
+                                    <img src="${video.cover_image_url}" alt="${video.title}" class="w-full h-48 object-cover">
+                                    <div class="p-4">
+                                        <p class="text-sm font-semibold text-gray-800 truncate" title="${video.title || 'Vidéo sans titre'}">
+                                            ${video.title || 'Vidéo sans titre'}
+                                        </p>
+                                    </div>
+                                </a>
+                            </div>
+                        `;
+                        videoListDiv.innerHTML += videoCard;
+                    });
+                } else {
+                    videoListDiv.innerHTML = '<p class="col-span-full text-center text-gray-500">Aucune vidéo trouvée.</p>';
+                }
+            } catch (error) {
+                videoListDiv.innerHTML = `<p class="col-span-full text-center text-red-500">Erreur: ${error.message}</p>`;
+            } finally {
+                videoLoader.classList.add('hidden');
+            }
+        }
+        
+        // --- Gérer la soumission du formulaire de publication ---
+        const uploadForm = document.getElementById('upload-form');
+        const publishButton = document.getElementById('publish-button');
+        const uploadStatus = document.getElementById('upload-status');
+        const videoFileInput = document.getElementById('video-file');
+
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
+            const file = videoFileInput.files[0];
+            if (!file) {
+                uploadStatus.textContent = 'Veuillez sélectionner un fichier.';
+                uploadStatus.className = 'text-red-600';
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('video', file);
+
+            publishButton.disabled = true;
+            publishButton.textContent = 'Publication en cours...';
+            uploadStatus.textContent = 'Initialisation de l\'upload...';
+            uploadStatus.className = 'text-blue-600';
+
+            try {
+                const response = await fetch('/api/publish', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                const result = await response.json();
+
+                if (!response.ok) {
+                   throw new Error(result.details?.error?.message || result.error || 'Une erreur est survenue.');
+                }
+                
+                uploadStatus.textContent = result.message;
+                uploadStatus.className = 'text-green-600';
+                uploadForm.reset(); // Vider le formulaire
+                setTimeout(loadUserVideos, 5000); // Recharger la liste des vidéos après quelques secondes
+
+            } catch (error) {
+                uploadStatus.textContent = `Erreur: ${error.message}`;
+                uploadStatus.className = 'text-red-600';
+            } finally {
+                publishButton.disabled = false;
+                publishButton.textContent = 'Publier sur TikTok';
+            }
+        });
+
+        // --- Fonction de gestion des erreurs globales ---
+        function handleError(message) {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('main-content').classList.add('hidden');
+            const errorDiv = document.getElementById('error-container');
+            document.getElementById('error-message').textContent = message;
+            errorDiv.classList.remove('hidden');
+        }
     </script>
 </body>
 </html>

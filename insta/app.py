@@ -13,7 +13,7 @@ app.add_middleware(
 )
 
 @app.get("/test")
-async def test():
+async def test():   
  return "Hello World!"
 
 if __name__ == "__main__":
