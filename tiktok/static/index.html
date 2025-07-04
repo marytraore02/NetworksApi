@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion TikTok</title>
+    <!-- Utilisation de Tailwind CSS pour un style moderne -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Style pour l'icône TikTok */
+        .tiktok-icon {
+            width: 24px;
+            height: 24px;
+            fill: currentColor;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen font-sans">
+    <div class="bg-white p-8 md:p-12 rounded-2xl shadow-lg text-center max-w-sm w-full">
+        <h1 class="text-2xl md:text-3xl font-bold text-gray-800 mb-2">Bienvenue</h1>
+        <p class="text-gray-600 mb-8">Connectez-vous pour continuer</p>
+        
+        <!-- Le bouton de connexion qui redirige vers le backend FastAPI -->
+        <a href="/login" 
+           class="w-full bg-black text-white font-bold py-3 px-6 rounded-lg inline-flex items-center justify-center hover:bg-gray-800 transition-colors duration-300 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black">
+            <!-- Icône SVG de TikTok -->
+            <svg class="tiktok-icon mr-3" viewBox="0 0 2859 3333" shape-rendering="geometricPrecision" text-rendering="geometricPrecision" image-rendering="optimizeQuality" fill-rule="evenodd" clip-rule="evenodd"><path d="M2081 0c55 473 319 755 778 785v532c-266 26-499-61-770-225v995c0 1264-1378 1659-1932 753-356-583-138-1606 1004-1647v561c-87 14-180 36-265 65-254 86-398 247-358 531 77 544 1075 705 992-358V1h551z"/></svg>
+            Se connecter avec TikTok
+        </a>
+        
+        <p class="text-xs text-gray-400 mt-8">
+            En cliquant, vous serez redirigé vers TikTok pour vous authentifier.
+        </p>
+    </div>
+</body>
+</html>

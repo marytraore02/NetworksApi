@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Tableau de Bord</title>
+    <style>
+        body { font-family: sans-serif; background-color: #fafafa; margin: 0; padding: 20px; }
+        h1, h2 { color: #262626; }
+        .profile { background: white; padding: 20px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #dbdbdb; }
+        .media-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .media-item { border: 1px solid #dbdbdb; border-radius: 8px; overflow: hidden; }
+        .media-item img, .media-item video { max-width: 100%; height: auto; display: block; }
+        .media-item p { padding: 0 10px; }
+    </style>
+</head>
+<body>
+    {% if user_profile %}
+        <div class="profile">
+            <h1>Bienvenue, {{ user_profile.username }} !</h1>
+            <p>Votre ID utilisateur est : {{ user_profile.id }}</p>
+        </div>
+    {% else %}
+        <h1>Erreur de connexion</h1>
+        <p>{{ error }}</p>
+        <a href="/">Retour à l'accueil</a>
+    {% endif %}
+
+    <h2>Vos publications récentes</h2>
+    <div class="media-grid">
+        {% for media in user_media %}
+            <div class="media-item">
+                {% if media.media_type == 'VIDEO' %}
+                    <video controls poster="{{ media.thumbnail_url }}">
+                        <source src="{{ media.media_url }}" type="video/mp4">
+                        Votre navigateur ne supporte pas la vidéo.
+                    </video>
+                {% else %}
+                    <img src="{{ media.media_url }}" alt="{{ media.caption | default('Publication Instagram', true) }}">
+                {% endif %}
+                <p>{{ media.caption }}</p>
+            </div>
+        {% else %}
+            <p>Aucune publication trouvée.</p>
+        {% endfor %}
+    </div>
+
+    <h3>⚠️ Note sur la publication</h3>
+    <p>
+        L'API **Instagram Basic Display** que nous utilisons ici est en **lecture seule**. 
+        Elle permet de lire les profils et les médias. Pour publier, commenter ou liker, 
+        il faut utiliser l'API **Instagram Graph**, qui est plus complexe, nécessite un compte Instagram Business 
+        ou Créateur lié à une Page Facebook, et des permissions supplémentaires (`instagram_manage_comments`, `instagram_content_publish`).
+    </p>
+</body>
+</html>

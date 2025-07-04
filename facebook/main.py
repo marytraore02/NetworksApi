@@ -34,7 +34,8 @@ templates = Jinja2Templates(directory="templates")
 @app.get("/login/facebook")
 def login_facebook():
     """Redirige l'utilisateur vers Facebook pour l'authentification."""
-    scope = "public_profile,pages_show_list,pages_manage_posts"
+    # scope = "public_profile,pages_show_list,pages_manage_posts"
+    scope = "public_profile,pages_show_list,pages_read_engagement,pages_read_user_content,pages_manage_posts,pages_manage_engagement,pages_manage_metadata,pages_manage_ads,pages_manage_cta,pages_manage_instant_articles,business_management"
     auth_url = (f"https://www.facebook.com/{API_VERSION}/dialog/oauth?"
                 f"client_id={FB_APP_ID}&"
                 f"redirect_uri={REDIRECT_URI}&"

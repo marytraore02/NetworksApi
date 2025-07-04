@@ -3,21 +3,11 @@ import base64
 import json
 import os
 
-# --- VOS INFORMATIONS D'IDENTIFICATION ---
-# Remplacez les valeurs ci-dessous par celles de votre application Server-to-Server OAuth
-# Vous les trouverez dans la section "App Credentials" de votre application sur le Zoom App Marketplace.
 
-ACCOUNT_ID = "pzCfSeavTDmHfVkymqmzow"
-CLIENT_ID = "xGisAVkQw6iZsCgiQsFNA"
-CLIENT_SECRET = "N91mAODkl47QYv76thwRndf9TwHSqP0v"
 
-# --- AVERTISSEMENT DE SÉCURITÉ ---
-# Il est fortement déconseillé de laisser des identifiants en clair dans le code pour une application en production.
-# Utilisez plutôt des variables d'environnement.
-# Exemple avec les variables d'environnement (méthode recommandée) :
-# ACCOUNT_ID = os.getenv("ZOOM_ACCOUNT_ID")
-# CLIENT_ID = os.getenv("ZOOM_CLIENT_ID")
-# CLIENT_SECRET = os.getenv("ZOOM_CLIENT_SECRET")
+ACCOUNT_ID = os.getenv("ZOOM_ACCOUNT_ID")
+CLIENT_ID = os.getenv("ZOOM_CLIENT_ID")
+CLIENT_SECRET = os.getenv("ZOOM_CLIENT_SECRET")
 
 
 def get_access_token():
