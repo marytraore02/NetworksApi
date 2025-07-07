@@ -11,13 +11,19 @@
         .media-item { border: 1px solid #dbdbdb; border-radius: 8px; overflow: hidden; }
         .media-item img, .media-item video { max-width: 100%; height: auto; display: block; }
         .media-item p { padding: 0 10px; }
+        .logout-button { 
+            background-color: #f44336; color: white; padding: 10px 20px; 
+            border: none; border-radius: 4px; cursor: pointer; font-size: 16px; margin-top: 20px;
+        }
     </style>
 </head>
 <body>
     {% if user_profile %}
         <div class="profile">
             <h1>Bienvenue, {{ user_profile.username }} !</h1>
-            <p>Votre ID utilisateur est : {{ user_profile.id }}</p>
+            <p>ID utilisateur : {{ user_profile.id }}</p>
+            
+            <button id="logoutBtn" class="logout-button">Déconnexion</button>
         </div>
     {% else %}
         <h1>Erreur de connexion</h1>
@@ -44,12 +50,37 @@
         {% endfor %}
     </div>
 
-    <h3>⚠️ Note sur la publication</h3>
+    <!-- <h3>⚠️ Note sur la publication</h3>
     <p>
         L'API **Instagram Basic Display** que nous utilisons ici est en **lecture seule**. 
         Elle permet de lire les profils et les médias. Pour publier, commenter ou liker, 
         il faut utiliser l'API **Instagram Graph**, qui est plus complexe, nécessite un compte Instagram Business 
         ou Créateur lié à une Page Facebook, et des permissions supplémentaires (`instagram_manage_comments`, `instagram_content_publish`).
-    </p>
+    </p> -->
+
+
+    <script>
+        document.getElementById('logoutBtn').addEventListener('click', function() {
+            console.log('Déconnexion en cours...');
+
+            // Étape 1: Tenter de vider le cache du navigateur pour cette origine
+            if ('caches' in window) {
+                caches.keys().then(function(keyList) {
+                    return Promise.all(keyList.map(function(key) {
+                        console.log('Suppression du cache:', key);
+                        return caches.delete(key);
+                    }));
+                }).then(function() {
+                    console.log('Cache Storage nettoyé.');
+                    // Étape 2: Rediriger vers la page de déconnexion après le nettoyage
+                    window.location.href = '/logout';
+                });
+            } else {
+                // Si l'API Cache n'est pas supportée, rediriger directement
+                console.log('Cache API non supportée.');
+                window.location.href = '/logout';
+            }
+        });
+    </script>
 </body>
 </html>

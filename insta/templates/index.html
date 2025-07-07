@@ -13,6 +13,11 @@
 <body>
     <div class="login-box">
         <h1>Mon Application Web</h1>
+        
+        {% if error_message %}
+            <p style="color: red;">{{ error_message }}</p>
+        {% endif %}
+    
         <p>Veuillez vous connecter avec votre compte Instagram.</p>
         <a href="{{ auth_link }}" class="login-button">Se connecter avec Instagram</a>
     </div>
